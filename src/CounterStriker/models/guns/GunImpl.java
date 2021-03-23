@@ -22,6 +22,8 @@ public abstract class GunImpl implements Gun {
         if(name==null || name.trim().isEmpty()){
             throw new NullPointerException(INVALID_GUN_NAME);
         }
+
+        this.name=name;
     }
 
     @Override
@@ -33,10 +35,11 @@ public abstract class GunImpl implements Gun {
         if(bulletsCount<0){
             throw new IllegalArgumentException(INVALID_GUN_BULLETS_COUNT);
         }
+        this.bulletsCount=bulletsCount;
     }
 
-    @Override
-    public int fire() {
-        return 0;
+    public void decreaseBullets(int amount){
+        this.bulletsCount -=amount;
+
     }
 }

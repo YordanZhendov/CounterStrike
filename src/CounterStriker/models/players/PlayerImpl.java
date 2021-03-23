@@ -20,13 +20,14 @@ public abstract class PlayerImpl implements Player {
 
     @Override
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public void setUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
             throw new NullPointerException(INVALID_PLAYER_NAME);
         }
+        this.username=username;
     }
 
     @Override
@@ -38,6 +39,8 @@ public abstract class PlayerImpl implements Player {
         if (health < 0) {
             throw new IllegalArgumentException(INVALID_PLAYER_HEALTH);
         }
+
+        this.health=health;
     }
 
     @Override
@@ -49,15 +52,13 @@ public abstract class PlayerImpl implements Player {
         if (armor < 0) {
             throw new IllegalArgumentException(INVALID_PLAYER_ARMOR);
         }
+
+        this.armor=armor;
     }
 
     @Override
     public boolean isAlive() {
-        return this.isAlive;
-    }
-
-    public boolean setAlive(boolean alive) {
-        return this.health > 0;
+        return this.health>0;
     }
 
     @Override
@@ -69,17 +70,29 @@ public abstract class PlayerImpl implements Player {
         if (gun == null) {
             throw new NullPointerException(INVALID_GUN);
         }
+        this.gun=gun;
     }
 
     @Override
     public void takeDamage(int points) {
+
         int restArmor = this.armor - points;
-        if (restArmor <= 0) {
-            int restHealth = this.health - Math.abs(restArmor);
-            if (restHealth <= 0) {
-                setAlive(false);
+        if (restArmor < 0) {
+            this.setArmor(0);
+
+            int restHealth = this.getHealth() - Math.abs(restArmor);
+            if(restHealth>0){
+                this.setHealth(restHealth);
+                this.isAlive=true;
+            }else {
+                this.setHealth(0);
+                this.isAlive=false;
             }
+
+        }else {
+            this.setArmor(restArmor);
         }
+
 
     }
 
@@ -87,13 +100,13 @@ public abstract class PlayerImpl implements Player {
     public String toString() {
         StringBuilder stringBuilder=new StringBuilder();
 
-        stringBuilder.append(this.username);
+        stringBuilder.append(String.format("%s: %s",this.getClass().getSimpleName(),this.getUsername()));
         stringBuilder.append(System.lineSeparator());
-        stringBuilder.append("Health: ").append(this.health);
+        stringBuilder.append(String.format("--Health: %d",this.getHealth()));
         stringBuilder.append(System.lineSeparator());
-        stringBuilder.append("Armor: ").append(this.armor);
+        stringBuilder.append(String.format("--Armor: %d",this.getArmor()));
         stringBuilder.append(System.lineSeparator());
-        stringBuilder.append("Gun: ").append(this.gun.getName());
+        stringBuilder.append(String.format("--Gun: %s",this.gun.getName()));
         stringBuilder.append(System.lineSeparator());
 
         return stringBuilder.toString().trim();
